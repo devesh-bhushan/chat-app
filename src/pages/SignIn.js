@@ -16,7 +16,7 @@ const SignIn = () => {
 
       Alert.success('Signed in ', 4000);
     } catch (err) {
-      Alert.info(err.message, 4000);
+      Alert.error(err.message, 4000);
     }
   };
   const onFacebookSignIn = () => {
