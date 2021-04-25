@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useCallback, useRef, useState } from 'react';
 import {
   Alert,
@@ -18,8 +17,8 @@ import { database } from '../misc/firebase';
 const { StringType } = Schema.Types;
 
 const model = Schema.Model({
-  name: StringType().isRequired('Chat Name Is Required'),
-  description: StringType().isRequired('Description Is Required'),
+  name: StringType().isRequired('Chat name is required'),
+  description: StringType().isRequired('Description is required'),
 });
 
 const INITIAL_FORM = {
@@ -41,12 +40,14 @@ const CreateRoomBtnModal = () => {
     if (!formRef.current.check()) {
       return;
     }
+
     setIsLoading(true);
 
     const newRoomData = {
       ...formValue,
       createdAt: firebase.database.ServerValue.TIMESTAMP,
     };
+
     try {
       await database.ref('rooms').push(newRoomData);
 
@@ -62,33 +63,33 @@ const CreateRoomBtnModal = () => {
 
   return (
     <div className="mt-1">
-      <Button block color="green " onClick={open}>
-        <Icon icon="creative" />
-        Create New Chat Room
+      <Button block color="green" onClick={open}>
+        <Icon icon="creative" /> Create new chat room
       </Button>
       <Modal show={isOpen} onHide={close}>
         <Modal.Header>
-          <Modal.Title>New Chat Room</Modal.Title>
+          <Modal.Title>New chat room</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form
             fluid
-            onClick={onFormChange}
+            onChange={onFormChange}
             formValue={formValue}
             model={model}
             ref={formRef}
           >
             <FormGroup>
               <ControlLabel>Room name</ControlLabel>
-              <FormControl name="name" placeholder="Enter Chat Room NAme...." />
+              <FormControl name="name" placeholder="Enter chat room name..." />
             </FormGroup>
+
             <FormGroup>
               <ControlLabel>Description</ControlLabel>
               <FormControl
+                name="description"
                 componentClass="textarea"
                 rows={5}
-                name="description"
-                placeholder="Enter Room Description...."
+                placeholder="Enter room description..."
               />
             </FormGroup>
           </Form>
@@ -100,7 +101,7 @@ const CreateRoomBtnModal = () => {
             onClick={onSubmit}
             disabled={isLoading}
           >
-            Create New Chat Roon
+            Create new chat room
           </Button>
         </Modal.Footer>
       </Modal>
