@@ -1,14 +1,14 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useRef } from 'react';
-import { Alert, Button, Modal } from 'rsuite';
+import { Modal, Button, Alert } from 'rsuite';
 import AvatarEditor from 'react-avatar-editor';
 import { useModalState } from '../../misc/custom-hooks';
-import { database, storage } from '../../misc/firebase';
+import { storage, database } from '../../misc/firebase';
 import { useProfile } from '../../context/profile.context';
 import ProfileAvatar from '../ProfileAvatar';
 import { getUserUpdates } from '../../misc/helpers';
 
-const fileInputTypes = '.png, .jpeg, .jpg ';
+const fileInputTypes = '.png, .jpeg, .jpg';
+
 const acceptedFileTypes = ['image/png', 'image/jpeg', 'image/pjpeg'];
 const isValidFile = file => acceptedFileTypes.includes(file.type);
 
@@ -18,23 +18,26 @@ const getBlob = canvas => {
       if (blob) {
         resolve(blob);
       } else {
-        reject(new Error('File Process Error'));
+        reject(new Error('File process error'));
       }
     });
   });
 };
 
 const AvatarUploadBtn = () => {
+  const { isOpen, open, close } = useModalState();
+
+  const { profile } = useProfile();
   const [img, setImg] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const avatarEditorRef = useRef();
-  const { isOpen, open, close } = useModalState();
-  const { profile } = useProfile();
 
   const onFileInputChange = ev => {
     const currFiles = ev.target.files;
+
     if (currFiles.length === 1) {
       const file = currFiles[0];
+
       if (isValidFile(file)) {
         setImg(file);
 
@@ -47,15 +50,19 @@ const AvatarUploadBtn = () => {
 
   const onUploadClick = async () => {
     const canvas = avatarEditorRef.current.getImageScaledToCanvas();
+
     setIsLoading(true);
     try {
       const blob = await getBlob(canvas);
+
       const avatarFileRef = storage
         .ref(`/profile/${profile.uid}`)
         .child('avatar');
+
       const uploadAvatarResult = await avatarFileRef.put(blob, {
-        cacheControl: `public,max-age=${3600 * 24 * 3}`,
+        cacheControl: `public, max-age=${3600 * 24 * 3}`,
       });
+
       const downloadUrl = await uploadAvatarResult.ref.getDownloadURL();
 
       const updates = await getUserUpdates(
@@ -64,10 +71,11 @@ const AvatarUploadBtn = () => {
         downloadUrl,
         database
       );
+
       await database.ref().update(updates);
 
       setIsLoading(false);
-      Alert.info('Avatar Has Been Uploaded', 4000);
+      Alert.info('Avatar has been uploaded', 4000);
     } catch (err) {
       setIsLoading(false);
       Alert.error(err.message, 4000);
@@ -75,18 +83,19 @@ const AvatarUploadBtn = () => {
   };
 
   return (
-    <div className=" mt-3 text-center">
+    <div className="mt-3 text-center">
       <ProfileAvatar
         src={profile.avatar}
         name={profile.name}
         className="width-200 height-200 img-fullsize font-huge"
       />
+
       <div>
         <label
           htmlFor="avatar-upload"
           className="d-block cursor-pointer padded"
         >
-          Select New Avatar
+          Select new avatar
           <input
             id="avatar-upload"
             type="file"
@@ -95,12 +104,13 @@ const AvatarUploadBtn = () => {
             onChange={onFileInputChange}
           />
         </label>
+
         <Modal show={isOpen} onHide={close}>
           <Modal.Header>
-            <Modal.Title>Adjust and Uplaod New Avatar</Modal.Title>
+            <Modal.Title>Adjust and upload new avatar</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div className="d-flex justify-content-center align-item-center h-100">
+            <div className="d-flex justify-content-center align-items-center h-100">
               {img && (
                 <AvatarEditor
                   ref={avatarEditorRef}
@@ -121,7 +131,7 @@ const AvatarUploadBtn = () => {
               onClick={onUploadClick}
               disabled={isLoading}
             >
-              Upload New Avatar
+              Upload new avatar
             </Button>
           </Modal.Footer>
         </Modal>

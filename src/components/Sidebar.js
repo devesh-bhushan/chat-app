@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Divider } from 'rsuite';
-import CreateRoomBtnModal from './CreateRoomBtnModal';
 import DashboardToggle from './dashboard/DashboardToggle';
+import CreateRoomBtnModal from './CreateRoomBtnModal';
 import ChatRoomList from './rooms/ChatRoomList';
 
 const Sidebar = () => {
@@ -19,7 +19,7 @@ const Sidebar = () => {
       <div ref={topSidebarRef}>
         <DashboardToggle />
         <CreateRoomBtnModal />
-        <Divider>Join room Conversation</Divider>
+        <Divider>Join conversation</Divider>
       </div>
       <ChatRoomList aboveElHeight={height} />
     </div>

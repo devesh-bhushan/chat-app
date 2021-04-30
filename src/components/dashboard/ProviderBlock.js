@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Button, Icon, Tag } from 'rsuite';
+import { Tag, Icon, Button, Alert } from 'rsuite';
 import firebase from 'firebase/app';
 import { auth } from '../../misc/firebase';
 
@@ -25,12 +25,12 @@ const ProviderBlock = () => {
   const unlink = async providerId => {
     try {
       if (auth.currentUser.providerData.length === 1) {
-        throw new Error(`You Cannot disccnnect from ${providerId}`);
+        throw new Error(`You can not disconnect from ${providerId}`);
       }
 
       await auth.currentUser.unlink(providerId);
       updateIsConnected(providerId, false);
-      Alert.info(`disconnected from ${providerId}`, 4000);
+      Alert.info(`Disconnected from ${providerId}`, 4000);
     } catch (err) {
       Alert.error(err.message, 4000);
     }
@@ -40,17 +40,16 @@ const ProviderBlock = () => {
     unlink('facebook.com');
   };
   const unlinkGoogle = () => {
-    unlink('google.com ');
+    unlink('google.com');
   };
 
   const link = async provider => {
     try {
       await auth.currentUser.linkWithPopup(provider);
       Alert.info(`Linked to ${provider.providerId}`, 4000);
-
       updateIsConnected(provider.providerId, true);
     } catch (err) {
-      Alert.error(err.message, 4000);
+      Alert.error(err.message, 400);
     }
   };
 
@@ -64,31 +63,26 @@ const ProviderBlock = () => {
   return (
     <div>
       {isConnected['google.com'] && (
-        <Tag closable color="green" onClose={unlinkGoogle}>
-          <Icon icon="google" />
-          Connected
+        <Tag color="green" closable onClose={unlinkGoogle}>
+          <Icon icon="google" /> Connected
         </Tag>
       )}
-
       {isConnected['facebook.com'] && (
-        <Tag closable color="blue" onClose={unlinkFacebook}>
-          <Icon icon="facebook" />
-          Connected
+        <Tag color="blue" closable onClose={unlinkFacebook}>
+          <Icon icon="facebook" /> Connected
         </Tag>
       )}
 
       <div className="mt-2">
         {!isConnected['google.com'] && (
           <Button block color="green" onClick={linkGoogle}>
-            <Icon icon="google" />
-            Link to Google
+            <Icon icon="google" /> Link to Google
           </Button>
         )}
 
         {!isConnected['facebook.com'] && (
           <Button block color="blue" onClick={linkFacebook}>
-            <Icon icon="facebook" />
-            Link to Facebook
+            <Icon icon="facebook" /> Link to Facebook
           </Button>
         )}
       </div>
